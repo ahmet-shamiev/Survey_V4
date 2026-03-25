@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zendelle — Наборы браслетов</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F7F5F0; --surface: #FFFFFF; --border: #E2DDD6;
+      --border-strong: #C8C2B8; --text: #1A1714; --text-muted: #7A746C;
+      --green: #2D6A4F; --green-light: #D8F3DC; --accent: #C17E3A;
+      --star-on: #F5A623; --star-hover: #F7BC5A;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+    .back-btn { font-family: 'DM Sans', sans-serif; background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 0.8rem; cursor: pointer; color: var(--text-muted); }
+    .back-btn:hover { background: var(--bg); }
+    header h1 { font-family: 'DM Serif Display', serif; font-size: 1.3rem; font-weight: 400; }
+    header p { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .counter-bar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; padding: 0.875rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .counter-stat { text-align: center; }
+    .counter-stat .num { font-family: 'DM Serif Display', serif; font-size: 1.4rem; }
+    .counter-stat .lbl { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .counter-divider { width: 1px; height: 32px; background: var(--border); }
+    .counter-spacer { flex: 1; }
+    main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .intro-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+    .intro-box h2 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; font-weight: 400; margin-bottom: 6px; }
+    .intro-box p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .img-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: box-shadow 0.2s, border-color 0.2s; }
+    .img-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+    .img-card.unrated { border-color: #E8A045; box-shadow: 0 0 0 2px #FFF3E0; }
+    .card-img-wrap { position: relative; background: #F0EDE8; }
+    .card-img-wrap img { width: 100%; height: auto; max-height: 280px; object-fit: contain; display: block; }
+    .sample-badge { position: absolute; top: 8px; left: 8px; background: rgba(255,255,255,0.92); border: 1px solid var(--border); border-radius: 20px; font-size: 0.65rem; font-weight: 500; padding: 2px 8px; color: var(--text); }
+    .card-body { padding: 0.875rem; }
+    .question-text { font-size: 0.82rem; color: var(--text); line-height: 1.5; min-height: 44px; margin-bottom: 0.875rem; }
+    .loading-dots { display: flex; gap: 4px; padding: 8px 0; }
+    .dot-anim { width: 5px; height: 5px; border-radius: 50%; background: var(--text-muted); animation: blink 1.2s infinite; }
+    .dot-anim:nth-child(2) { animation-delay: 0.2s; } .dot-anim:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+    .star-row { display: flex; gap: 4px; align-items: center; justify-content: center; padding: 4px 0; }
+    .star { font-size: 1.6rem; cursor: pointer; color: var(--border); transition: color 0.1s, transform 0.1s; line-height: 1; user-select: none; }
+    .star:hover { transform: scale(1.15); }
+    .star.lit { color: var(--star-on); }
+    .star.hover-lit { color: var(--star-hover); }
+    .rating-label { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; min-height: 16px; }
+    button { font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.15s; }
+    .btn-primary { padding: 10px 28px; border: 1px solid var(--green); border-radius: 8px; font-size: 0.9rem; background: var(--surface); color: var(--green); font-weight: 500; }
+    .btn-primary:hover { background: var(--green-light); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .submit-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+    .progress-wrap { display: none; }
+    .progress-track { height: 4px; background: var(--border); border-radius: 99px; margin-bottom: 8px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; width: 0%; transition: width 0.4s; }
+    .status-msg { font-size: 0.82rem; }
+    footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 3rem; }
+  </style>
+</head>
+<body>
+<header>
+  <button class="back-btn" onclick="window.location.href='home.html'">← Назад</button>
+  <div>
+    <h1>📿 Наборы браслетов</h1>
+    <p>Оцените каждое изображение от 1 до 5 звёзд</p>
+  </div>
+</header>
+<main>
+  <div class="counter-bar">
+    <div class="counter-stat"><div class="num" id="cnt-total">0</div><div class="lbl">Всего</div></div>
+    <div class="counter-divider"></div>
+    <div class="counter-stat"><div class="num" id="cnt-rated">0</div><div class="lbl">Оценено</div></div>
+    <div class="counter-divider"></div>
+    <div class="counter-stat"><div class="num" id="cnt-left">0</div><div class="lbl">Осталось</div></div>
+    <div class="counter-spacer"></div>
+  </div>
+  <div class="intro-box">
+    <h2>Пожалуйста, оцените каждое изображение</h2>
+    <p>У вас <strong id="intro-count">0</strong> изображений. Нажмите на звёзды, чтобы оценить от 1 (Плохо) до 5 (Отлично), затем нажмите «Отправить».</p>
+  </div>
+  <div class="cards-grid" id="cards-grid"></div>
+  <div id="submit-area">
+    <div class="submit-row">
+      <button class="btn-primary" id="submit-btn" onclick="submitAll()">Отправить оценки</button>
+    </div>
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="status-msg" id="status-msg"></div>
+    </div>
+  </div>
+</main>
+<footer>Zendelle · Опрос качества аксессуаров</footer>
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzwCqoRR0mLdDHRTBBVq_tjuxL4nojb7eLIizRAgu197KSXJP7-NSzvZ3RGxXbSzF4K/exec';
+  const SURVEY_ID = 'bracelet-sets';
+  const API_URL = 'https://api.anthropic.com/v1/messages';
+  const LABELS = ['','Плохо','Удовлетворительно','Хорошо','Очень хорошо','Отлично'];
+  const IMAGES = [{"src":"images/bracelet-sets/2431774100539_.pic_hd.jpg","label":"Образец 1"},{"src":"images/bracelet-sets/2451774100543_.pic_hd.jpg","label":"Образец 2"},{"src":"images/bracelet-sets/2481774100568_.pic_hd.jpg","label":"Образец 3"},{"src":"images/bracelet-sets/2491774100570_.pic_hd.jpg","label":"Образец 4"},{"src":"images/bracelet-sets/2501774100571_.pic_hd.jpg","label":"Образец 5"},{"src":"images/bracelet-sets/2471774100567_.pic_hd.jpg","label":"Образец 6"},{"src":"images/bracelet-sets/2511774100573_.pic_hd.jpg","label":"Образец 7"},{"src":"images/bracelet-sets/2521774100575_.pic_hd.jpg","label":"Образец 8"},{"src":"images/bracelet-sets/2551774100580_.pic_hd.jpg","label":"Образец 9"},{"src":"images/bracelet-sets/2561774100581_.pic_hd.jpg","label":"Образец 10"},{"src":"images/bracelet-sets/2641774100617_.pic_hd.jpg","label":"Образец 11"},{"src":"images/bracelet-sets/3091774100707_.pic_hd.jpg","label":"Образец 12"},{"src":"images/bracelet-sets/3101774100709_.pic_hd.jpg","label":"Образец 13"},{"src":"images/bracelet-sets/3121774100712_.pic_hd.jpg","label":"Образец 14"},{"src":"images/bracelet-sets/2921774100680_.pic_hd.jpg","label":"Образец 15"},{"src":"images/bracelet-sets/2931774100682_.pic_hd.jpg","label":"Образец 16"},{"src":"images/bracelet-sets/2941774100683_.pic_hd.jpg","label":"Образец 17"},{"src":"images/bracelet-sets/2951774100685_.pic_hd.jpg","label":"Образец 18"},{"src":"images/bracelet-sets/2961774100687_.pic_hd.jpg","label":"Образец 19"},{"src":"images/bracelet-sets/2971774100688_.pic_hd.jpg","label":"Образец 20"},{"src":"images/bracelet-sets/2981774100690_.pic_hd.jpg","label":"Образец 21"},{"src":"images/bracelet-sets/3031774100698_.pic_hd.jpg","label":"Образец 22"},{"src":"images/bracelet-sets/3941774100867_.pic_hd.jpg","label":"Образец 23"},{"src":"images/bracelet-sets/3081774100706_.pic_hd.jpg","label":"Образец 24"},{"src":"images/bracelet-sets/4011774100879_.pic_hd.jpg","label":"Образец 25"},{"src":"images/bracelet-sets/4051774100885_.pic_hd.jpg","label":"Образец 26"},{"src":"images/bracelet-sets/4091774100893_.pic_hd.jpg","label":"Образец 27"},{"src":"images/bracelet-sets/4141774100901_.pic_hd.jpg","label":"Образец 28"},{"src":"images/bracelet-sets/3111774100711_.pic_hd.jpg","label":"Образец 29"},{"src":"images/bracelet-sets/3131774100714_.pic_hd.jpg","label":"Образец 30"},{"src":"images/bracelet-sets/4161774100904_.pic_hd.jpg","label":"Образец 31"},{"src":"images/bracelet-sets/4171774100906_.pic_hd.jpg","label":"Образец 32"},{"src":"images/bracelet-sets/4331774101137_.pic_hd.jpg","label":"Образец 33"},{"src":"images/bracelet-sets/4341774101140_.pic_hd.jpg","label":"Образец 34"},{"src":"images/bracelet-sets/4541774101344_.pic.jpg","label":"Образец 35"},{"src":"images/bracelet-sets/4841774101393_.pic.jpg","label":"Образец 36"},{"src":"images/bracelet-sets/4881774101400_.pic.jpg","label":"Образец 37"},{"src":"images/bracelet-sets/grid_crop_1.jpg","label":"Образец 38"},{"src":"images/bracelet-sets/grid_crop_2.jpg","label":"Образец 39"},{"src":"images/bracelet-sets/grid_crop_3.jpg","label":"Образец 40"},{"src":"images/bracelet-sets/grid_crop_4.jpg","label":"Образец 41"},{"src":"images/bracelet-sets/grid_crop_5.jpg","label":"Образец 42"},{"src":"images/bracelet-sets/grid_crop_6.jpg","label":"Образец 43"},{"src":"images/bracelet-sets/set2_split_1.jpg","label":"Образец 44"},{"src":"images/bracelet-sets/set2_split_2.jpg","label":"Образец 45"},{"src":"images/bracelet-sets/set2_split_3.jpg","label":"Образец 46"},{"src":"images/bracelet-sets/set2_split_4.jpg","label":"Образец 47"},{"src":"images/bracelet-sets/split_1.jpg","label":"Образец 48"},{"src":"images/bracelet-sets/split_2.jpg","label":"Образец 49"},{"src":"images/bracelet-sets/split_3.jpg","label":"Образец 50"},{"src":"images/bracelet-sets/split_4.jpg","label":"Образец 51"}];
+  let cards = [];
+
+  function init() {
+    document.getElementById('cnt-total').textContent = IMAGES.length;
+    document.getElementById('cnt-left').textContent = IMAGES.length;
+    document.getElementById('intro-count').textContent = IMAGES.length;
+    const grid = document.getElementById('cards-grid');
+    IMAGES.forEach((img, i) => {
+      const id = 'c' + i;
+      cards.push({ id, rating: 0 });
+      const div = document.createElement('div');
+      div.className = 'img-card';
+      div.id = 'card-' + id;
+      div.innerHTML = `
+        <div class="card-img-wrap">
+          <img src="${img.src}" alt="${img.label}">
+          <div class="sample-badge">${img.label}</div>
+        </div>
+        <div class="card-body">
+          <div class="question-text" id="q-${id}"></div>
+          ${buildStars(id)}
+        </div>
+      `;
+      grid.appendChild(div);
+      generateQuestion(img.src, id);
+    });
+  }
+
+  async function generateQuestion(src, cardId) {
+    const qEl = document.getElementById('q-' + cardId);
+    qEl.innerHTML = '<div class="loading-dots"><div class="dot-anim"></div><div class="dot-anim"></div><div class="dot-anim"></div></div>';
+    try {
+      const imgRes = await fetch(src);
+      const blob = await imgRes.blob();
+      const base64 = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result.split(',')[1]); r.readAsDataURL(blob); });
+      const res = await fetch(API_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+          system: 'Сгенерируй ОДИН короткий вопрос на русском языке, предлагающий оценить конкретный аспект украшения или аксессуара на изображении по шкале от 1 до 5 звёзд. Укажи что именно оценить (дизайн, качество, привлекательность и т.д.). Ответь ТОЛЬКО вопросом.',
+          messages: [{ role: 'user', content: [
+            { type: 'image', source: { type: 'base64', media_type: blob.type || 'image/jpeg', data: base64 } },
+            { type: 'text', text: 'Сгенерируй вопрос для оценки этого изображения.' }
+          ]}]
+        })
+      });
+      const data = await res.json();
+      qEl.textContent = data.content?.find(b => b.type === 'text')?.text?.trim() || 'Как бы вы оценили этот аксессуар?';
+    } catch(e) { qEl.textContent = 'Как бы вы оценили этот аксессуар?'; }
+  }
+
+  function buildStars(cardId) {
+    let h = '<div class="star-row">';
+    for (let i = 1; i <= 5; i++) {
+      h += `<span class="star" id="star-${cardId}-${i}"
+        onmouseenter="setStars('${cardId}',${i},true)"
+        onmouseleave="setStars('${cardId}',cards.find(c=>c.id==='${cardId}')?.rating||0,false)"
+        onclick="rateCard('${cardId}',${i})">★</span>`;
+    }
+    return h + '</div><div class="rating-label" id="rating-lbl-' + cardId + '"></div>';
+  }
+
+  function setStars(cardId, rating, isHover) {
+    for (let i = 1; i <= 5; i++) {
+      const s = document.getElementById('star-' + cardId + '-' + i);
+      s.classList.remove('lit','hover-lit');
+      if (isHover && i <= rating) s.classList.add('hover-lit');
+      else if (!isHover && i <= rating) s.classList.add('lit');
+    }
+    const card = cards.find(c => c.id === cardId);
+    document.getElementById('rating-lbl-' + cardId).textContent =
+      isHover ? (rating > 0 ? LABELS[rating] : '') : (card?.rating > 0 ? LABELS[card.rating] : '');
+  }
+
+  function rateCard(cardId, rating) {
+    const card = cards.find(c => c.id === cardId);
+    if (!card) return;
+    card.rating = rating;
+    setStars(cardId, rating, false);
+    document.getElementById('card-' + cardId).classList.remove('unrated');
+    const rated = cards.filter(c => c.rating > 0).length;
+    document.getElementById('cnt-rated').textContent = rated;
+    document.getElementById('cnt-left').textContent = cards.length - rated;
+  }
+
+  async function submitAll() {
+    const unrated = cards.filter(c => !c.rating);
+    if (unrated.length > 0) {
+      unrated.forEach(c => document.getElementById('card-' + c.id).classList.add('unrated'));
+      showStatus(unrated.length + ' изображений без оценки — выделены оранжевым. Отправляем через 2 сек...', '#C17E3A');
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('progress-wrap').style.display = 'block';
+    setProgress(20, 'Подготовка данных...');
+    const values = [new Date().toLocaleString('ru-RU'), ...cards.map(c => c.rating || '')];
+    setProgress(60, 'Отправка в Google Sheets...');
+    try {
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ values }) });
+      setProgress(100, '');
+      localStorage.setItem('zendelle_done_' + SURVEY_ID, '1');
+      window.location.href = 'thankyou.html';
+    } catch(e) {
+      showStatus('Ошибка — попробуйте ещё раз.', '#9B2335');
+      document.getElementById('submit-btn').disabled = false;
+    }
+  }
+
+  function setProgress(pct, msg) {
+    document.getElementById('progress-fill').style.width = pct + '%';
+    if (msg) { document.getElementById('status-msg').style.color = 'var(--text-muted)'; document.getElementById('status-msg').textContent = msg; }
+  }
+  function showStatus(msg, color) {
+    document.getElementById('progress-wrap').style.display = 'block';
+    document.getElementById('status-msg').style.color = color;
+    document.getElementById('status-msg').textContent = msg;
+  }
+  init();
+</script>
+</body>
+</html>

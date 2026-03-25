@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Спасибо!</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #F7F5F0; --surface: #FFFFFF; --border: #E2DDD6; --green: #2D6A4F; --green-light: #D8F3DC; --accent: #C17E3A; --text-muted: #7A746C; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3rem 2.5rem; text-align: center; max-width: 460px; width: 100%; }
+    .check { width: 72px; height: 72px; background: var(--green-light); border: 2px solid var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 2rem; color: var(--green); }
+    h1 { font-family: 'DM Serif Display', serif; font-size: 2rem; font-weight: 400; color: var(--green); margin-bottom: 1rem; }
+    p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 0.75rem; }
+    .divider { width: 40px; height: 2px; background: var(--accent); border-radius: 2px; margin: 1.5rem auto; }
+    .back-link { display: inline-block; margin-top: 1rem; padding: 10px 24px; border: 1px solid var(--green); border-radius: 8px; color: var(--green); font-size: 0.85rem; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+    .back-link:hover { background: var(--green-light); }
+    footer { margin-top: 2rem; font-size: 0.75rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="check">✓</div>
+    <h1>Спасибо!</h1>
+    <p>Ваши оценки успешно отправлены.</p>
+    <div class="divider"></div>
+    <p>Мы ценим ваше время и участие.<br>Результаты помогут нам выбрать лучшие украшения.</p>
+    <a href="home.html" class="back-link">← Вернуться к опросам</a>
+  </div>
+  <footer>Zendelle · Опрос качества аксессуаров</footer>
+</body>
+</html>

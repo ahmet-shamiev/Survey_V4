@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zendelle — Браслеты</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F7F5F0; --surface: #FFFFFF; --border: #E2DDD6;
+      --border-strong: #C8C2B8; --text: #1A1714; --text-muted: #7A746C;
+      --green: #2D6A4F; --green-light: #D8F3DC; --accent: #C17E3A;
+      --star-on: #F5A623; --star-hover: #F7BC5A;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+    .back-btn { font-family: 'DM Sans', sans-serif; background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 0.8rem; cursor: pointer; color: var(--text-muted); }
+    .back-btn:hover { background: var(--bg); }
+    header h1 { font-family: 'DM Serif Display', serif; font-size: 1.3rem; font-weight: 400; }
+    header p { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .counter-bar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; padding: 0.875rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .counter-stat { text-align: center; }
+    .counter-stat .num { font-family: 'DM Serif Display', serif; font-size: 1.4rem; }
+    .counter-stat .lbl { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .counter-divider { width: 1px; height: 32px; background: var(--border); }
+    .counter-spacer { flex: 1; }
+    main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .intro-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+    .intro-box h2 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; font-weight: 400; margin-bottom: 6px; }
+    .intro-box p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .img-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: box-shadow 0.2s, border-color 0.2s; }
+    .img-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+    .img-card.unrated { border-color: #E8A045; box-shadow: 0 0 0 2px #FFF3E0; }
+    .card-img-wrap { position: relative; background: #F0EDE8; }
+    .card-img-wrap img { width: 100%; height: auto; max-height: 280px; object-fit: contain; display: block; }
+    .sample-badge { position: absolute; top: 8px; left: 8px; background: rgba(255,255,255,0.92); border: 1px solid var(--border); border-radius: 20px; font-size: 0.65rem; font-weight: 500; padding: 2px 8px; color: var(--text); }
+    .card-body { padding: 0.875rem; }
+    .question-text { font-size: 0.82rem; color: var(--text); line-height: 1.5; min-height: 44px; margin-bottom: 0.875rem; }
+    .loading-dots { display: flex; gap: 4px; padding: 8px 0; }
+    .dot-anim { width: 5px; height: 5px; border-radius: 50%; background: var(--text-muted); animation: blink 1.2s infinite; }
+    .dot-anim:nth-child(2) { animation-delay: 0.2s; } .dot-anim:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+    .star-row { display: flex; gap: 4px; align-items: center; justify-content: center; padding: 4px 0; }
+    .star { font-size: 1.6rem; cursor: pointer; color: var(--border); transition: color 0.1s, transform 0.1s; line-height: 1; user-select: none; }
+    .star:hover { transform: scale(1.15); }
+    .star.lit { color: var(--star-on); }
+    .star.hover-lit { color: var(--star-hover); }
+    .rating-label { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; min-height: 16px; }
+    button { font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.15s; }
+    .btn-primary { padding: 10px 28px; border: 1px solid var(--green); border-radius: 8px; font-size: 0.9rem; background: var(--surface); color: var(--green); font-weight: 500; }
+    .btn-primary:hover { background: var(--green-light); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .submit-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+    .progress-wrap { display: none; }
+    .progress-track { height: 4px; background: var(--border); border-radius: 99px; margin-bottom: 8px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; width: 0%; transition: width 0.4s; }
+    .status-msg { font-size: 0.82rem; }
+    footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 3rem; }
+  </style>
+</head>
+<body>
+<header>
+  <button class="back-btn" onclick="window.location.href='home.html'">← Назад</button>
+  <div>
+    <h1>💎 Браслеты</h1>
+    <p>Оцените каждое изображение от 1 до 5 звёзд</p>
+  </div>
+</header>
+<main>
+  <div class="counter-bar">
+    <div class="counter-stat"><div class="num" id="cnt-total">0</div><div class="lbl">Всего</div></div>
+    <div class="counter-divider"></div>
+    <div class="counter-stat"><div class="num" id="cnt-rated">0</div><div class="lbl">Оценено</div></div>
+    <div class="counter-divider"></div>
+    <div class="counter-stat"><div class="num" id="cnt-left">0</div><div class="lbl">Осталось</div></div>
+    <div class="counter-spacer"></div>
+  </div>
+  <div class="intro-box">
+    <h2>Пожалуйста, оцените каждое изображение</h2>
+    <p>У вас <strong id="intro-count">0</strong> изображений. Нажмите на звёзды, чтобы оценить от 1 (Плохо) до 5 (Отлично), затем нажмите «Отправить».</p>
+  </div>
+  <div class="cards-grid" id="cards-grid"></div>
+  <div id="submit-area">
+    <div class="submit-row">
+      <button class="btn-primary" id="submit-btn" onclick="submitAll()">Отправить оценки</button>
+    </div>
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="status-msg" id="status-msg"></div>
+    </div>
+  </div>
+</main>
+<footer>Zendelle · Опрос качества аксессуаров</footer>
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxzmUP1tzYMCRfgRx_GSbG6SvNvMFD01Xhsym1yiP5Ki9ffxpiiKvVjbXS9_aw_KYO2/exec';
+  const SURVEY_ID = 'bracelets';
+  const API_URL = 'https://api.anthropic.com/v1/messages';
+  const LABELS = ['','Плохо','Удовлетворительно','Хорошо','Очень хорошо','Отлично'];
+  const IMAGES = [{"src":"images/bracelets/2341774100483_.pic_hd.jpg","label":"Образец 1"},{"src":"images/bracelets/2351774100500_.pic_hd.jpg","label":"Образец 2"},{"src":"images/bracelets/2361774100502_.pic_hd.jpg","label":"Образец 3"},{"src":"images/bracelets/2371774100503_.pic_hd.jpg","label":"Образец 4"},{"src":"images/bracelets/2381774100505_.pic_hd.jpg","label":"Образец 5"},{"src":"images/bracelets/2391774100507_.pic_hd.jpg","label":"Образец 6"},{"src":"images/bracelets/2401774100509_.pic_hd.jpg","label":"Образец 7"},{"src":"images/bracelets/2411774100511_.pic_hd.jpg","label":"Образец 8"},{"src":"images/bracelets/2421774100513_.pic_hd.jpg","label":"Образец 9"},{"src":"images/bracelets/2441774100541_.pic_hd.jpg","label":"Образец 10"},{"src":"images/bracelets/2461774100545_.pic_hd.jpg","label":"Образец 11"},{"src":"images/bracelets/2531774100576_.pic_hd.jpg","label":"Образец 12"},{"src":"images/bracelets/2541774100578_.pic_hd.jpg","label":"Образец 13"},{"src":"images/bracelets/2571774100585_.pic_hd.jpg","label":"Образец 14"},{"src":"images/bracelets/2581774100589_.pic_hd.jpg","label":"Образец 15"},{"src":"images/bracelets/2591774100609_.pic_hd.jpg","label":"Образец 16"},{"src":"images/bracelets/2611774100612_.pic_hd.jpg","label":"Образец 17"},{"src":"images/bracelets/2651774100619_.pic_hd.jpg","label":"Образец 18"},{"src":"images/bracelets/2661774100621_.pic_hd.jpg","label":"Образец 19"},{"src":"images/bracelets/2671774100625_.pic_hd.jpg","label":"Образец 20"},{"src":"images/bracelets/2681774100639_.pic_hd.jpg","label":"Образец 21"},{"src":"images/bracelets/2691774100640_.pic_hd.jpg","label":"Образец 22"},{"src":"images/bracelets/2701774100642_.pic_hd.jpg","label":"Образец 23"},{"src":"images/bracelets/2721774100645_.pic_hd.jpg","label":"Образец 24"},{"src":"images/bracelets/2731774100647_.pic_hd.jpg","label":"Образец 25"},{"src":"images/bracelets/2741774100650_.pic_hd.jpg","label":"Образец 26"},{"src":"images/bracelets/2751774100651_.pic_hd.jpg","label":"Образец 27"},{"src":"images/bracelets/2761774100653_.pic_hd.jpg","label":"Образец 28"},{"src":"images/bracelets/2771774100654_.pic_hd.jpg","label":"Образец 29"},{"src":"images/bracelets/2601774100611_.pic_hd.jpg","label":"Образец 30"},{"src":"images/bracelets/2621774100614_.pic_hd.jpg","label":"Образец 31"},{"src":"images/bracelets/2781774100656_.pic_hd.jpg","label":"Образец 32"},{"src":"images/bracelets/2791774100658_.pic_hd.jpg","label":"Образец 33"},{"src":"images/bracelets/2801774100659_.pic_hd.jpg","label":"Образец 34"},{"src":"images/bracelets/2811774100661_.pic_hd.jpg","label":"Образец 35"},{"src":"images/bracelets/2821774100663_.pic_hd.jpg","label":"Образец 36"},{"src":"images/bracelets/2831774100665_.pic_hd.jpg","label":"Образец 37"},{"src":"images/bracelets/2841774100666_.pic_hd.jpg","label":"Образец 38"},{"src":"images/bracelets/2631774100616_.pic_hd.jpg","label":"Образец 39"},{"src":"images/bracelets/2711774100643_.pic_hd.jpg","label":"Образец 40"},{"src":"images/bracelets/3011774100695_.pic_hd.jpg","label":"Образец 41"},{"src":"images/bracelets/3021774100696_.pic_hd.jpg","label":"Образец 42"},{"src":"images/bracelets/3041774100699_.pic_hd.jpg","label":"Образец 43"},{"src":"images/bracelets/3051774100702_.pic_hd.jpg","label":"Образец 44"},{"src":"images/bracelets/3061774100703_.pic_hd.jpg","label":"Образец 45"},{"src":"images/bracelets/3071774100705_.pic_hd.jpg","label":"Образец 46"},{"src":"images/bracelets/2851774100668_.pic_hd.jpg","label":"Образец 47"},{"src":"images/bracelets/2861774100670_.pic_hd.jpg","label":"Образец 48"},{"src":"images/bracelets/2871774100671_.pic_hd.jpg","label":"Образец 49"},{"src":"images/bracelets/3331774100749_.pic_hd.jpg","label":"Образец 50"},{"src":"images/bracelets/3361774100755_.pic_hd.jpg","label":"Образец 51"},{"src":"images/bracelets/3371774100756_.pic_hd.jpg","label":"Образец 52"},{"src":"images/bracelets/3391774100759_.pic_hd.jpg","label":"Образец 53"},{"src":"images/bracelets/3401774100760_.pic_hd.jpg","label":"Образец 54"},{"src":"images/bracelets/3411774100762_.pic_hd.jpg","label":"Образец 55"},{"src":"images/bracelets/2881774100673_.pic_hd.jpg","label":"Образец 56"},{"src":"images/bracelets/2891774100675_.pic_hd.jpg","label":"Образец 57"},{"src":"images/bracelets/2901774100677_.pic_hd.jpg","label":"Образец 58"},{"src":"images/bracelets/3441774100768_.pic_hd.jpg","label":"Образец 59"},{"src":"images/bracelets/2911774100678_.pic_hd.jpg","label":"Образец 60"},{"src":"images/bracelets/3461774100771_.pic_hd.jpg","label":"Образец 61"},{"src":"images/bracelets/3471774100773_.pic_hd.jpg","label":"Образец 62"},{"src":"images/bracelets/3481774100774_.pic_hd.jpg","label":"Образец 63"},{"src":"images/bracelets/3491774100776_.pic_hd.jpg","label":"Образец 64"},{"src":"images/bracelets/3501774100778_.pic_hd.jpg","label":"Образец 65"},{"src":"images/bracelets/3511774100779_.pic_hd.jpg","label":"Образец 66"},{"src":"images/bracelets/3521774100781_.pic_hd.jpg","label":"Образец 67"},{"src":"images/bracelets/3531774100782_.pic_hd.jpg","label":"Образец 68"},{"src":"images/bracelets/3541774100784_.pic_hd.jpg","label":"Образец 69"},{"src":"images/bracelets/3551774100785_.pic_hd.jpg","label":"Образец 70"},{"src":"images/bracelets/3561774100787_.pic_hd.jpg","label":"Образец 71"},{"src":"images/bracelets/3571774100789_.pic_hd.jpg","label":"Образец 72"},{"src":"images/bracelets/3141774100716_.pic_hd.jpg","label":"Образец 73"},{"src":"images/bracelets/3581774100791_.pic_hd.jpg","label":"Образец 74"},{"src":"images/bracelets/3591774100792_.pic_hd.jpg","label":"Образец 75"},{"src":"images/bracelets/3601774100794_.pic_hd.jpg","label":"Образец 76"},{"src":"images/bracelets/3611774100796_.pic_hd.jpg","label":"Образец 77"},{"src":"images/bracelets/3621774100798_.pic_hd.jpg","label":"Образец 78"},{"src":"images/bracelets/3631774100799_.pic_hd.jpg","label":"Образец 79"},{"src":"images/bracelets/3641774100801_.pic_hd.jpg","label":"Образец 80"},{"src":"images/bracelets/3651774100802_.pic_hd.jpg","label":"Образец 81"},{"src":"images/bracelets/3661774100804_.pic_hd.jpg","label":"Образец 82"},{"src":"images/bracelets/3671774100806_.pic_hd.jpg","label":"Образец 83"},{"src":"images/bracelets/3681774100807_.pic_hd.jpg","label":"Образец 84"},{"src":"images/bracelets/3691774100809_.pic_hd.jpg","label":"Образец 85"},{"src":"images/bracelets/3701774100811_.pic_hd.jpg","label":"Образец 86"},{"src":"images/bracelets/3711774100812_.pic_hd.jpg","label":"Образец 87"},{"src":"images/bracelets/3721774100814_.pic_hd.jpg","label":"Образец 88"},{"src":"images/bracelets/3731774100815_.pic_hd.jpg","label":"Образец 89"},{"src":"images/bracelets/3741774100817_.pic_hd.jpg","label":"Образец 90"},{"src":"images/bracelets/3751774100818_.pic_hd.jpg","label":"Образец 91"},{"src":"images/bracelets/3761774100820_.pic_hd.jpg","label":"Образец 92"},{"src":"images/bracelets/3771774100822_.pic_hd.jpg","label":"Образец 93"},{"src":"images/bracelets/3781774100824_.pic_hd.jpg","label":"Образец 94"},{"src":"images/bracelets/3791774100825_.pic_hd.jpg","label":"Образец 95"},{"src":"images/bracelets/3801774100827_.pic_hd.jpg","label":"Образец 96"},{"src":"images/bracelets/3951774100868_.pic_hd.jpg","label":"Образец 97"},{"src":"images/bracelets/3421774100764_.pic_hd.jpg","label":"Образец 98"},{"src":"images/bracelets/3431774100766_.pic_hd.jpg","label":"Образец 99"},{"src":"images/bracelets/3451774100770_.pic_hd.jpg","label":"Образец 100"}];
+  let cards = [];
+
+  function init() {
+    document.getElementById('cnt-total').textContent = IMAGES.length;
+    document.getElementById('cnt-left').textContent = IMAGES.length;
+    document.getElementById('intro-count').textContent = IMAGES.length;
+    const grid = document.getElementById('cards-grid');
+    IMAGES.forEach((img, i) => {
+      const id = 'c' + i;
+      cards.push({ id, rating: 0 });
+      const div = document.createElement('div');
+      div.className = 'img-card';
+      div.id = 'card-' + id;
+      div.innerHTML = `
+        <div class="card-img-wrap">
+          <img src="${img.src}" alt="${img.label}">
+          <div class="sample-badge">${img.label}</div>
+        </div>
+        <div class="card-body">
+          <div class="question-text" id="q-${id}"></div>
+          ${buildStars(id)}
+        </div>
+      `;
+      grid.appendChild(div);
+      generateQuestion(img.src, id);
+    });
+  }
+
+  async function generateQuestion(src, cardId) {
+    const qEl = document.getElementById('q-' + cardId);
+    qEl.innerHTML = '<div class="loading-dots"><div class="dot-anim"></div><div class="dot-anim"></div><div class="dot-anim"></div></div>';
+    try {
+      const imgRes = await fetch(src);
+      const blob = await imgRes.blob();
+      const base64 = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result.split(',')[1]); r.readAsDataURL(blob); });
+      const res = await fetch(API_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+          system: 'Сгенерируй ОДИН короткий вопрос на русском языке, предлагающий оценить конкретный аспект украшения или аксессуара на изображении по шкале от 1 до 5 звёзд. Укажи что именно оценить (дизайн, качество, привлекательность и т.д.). Ответь ТОЛЬКО вопросом.',
+          messages: [{ role: 'user', content: [
+            { type: 'image', source: { type: 'base64', media_type: blob.type || 'image/jpeg', data: base64 } },
+            { type: 'text', text: 'Сгенерируй вопрос для оценки этого изображения.' }
+          ]}]
+        })
+      });
+      const data = await res.json();
+      qEl.textContent = data.content?.find(b => b.type === 'text')?.text?.trim() || 'Как бы вы оценили этот аксессуар?';
+    } catch(e) { qEl.textContent = 'Как бы вы оценили этот аксессуар?'; }
+  }
+
+  function buildStars(cardId) {
+    let h = '<div class="star-row">';
+    for (let i = 1; i <= 5; i++) {
+      h += `<span class="star" id="star-${cardId}-${i}"
+        onmouseenter="setStars('${cardId}',${i},true)"
+        onmouseleave="setStars('${cardId}',cards.find(c=>c.id==='${cardId}')?.rating||0,false)"
+        onclick="rateCard('${cardId}',${i})">★</span>`;
+    }
+    return h + '</div><div class="rating-label" id="rating-lbl-' + cardId + '"></div>';
+  }
+
+  function setStars(cardId, rating, isHover) {
+    for (let i = 1; i <= 5; i++) {
+      const s = document.getElementById('star-' + cardId + '-' + i);
+      s.classList.remove('lit','hover-lit');
+      if (isHover && i <= rating) s.classList.add('hover-lit');
+      else if (!isHover && i <= rating) s.classList.add('lit');
+    }
+    const card = cards.find(c => c.id === cardId);
+    document.getElementById('rating-lbl-' + cardId).textContent =
+      isHover ? (rating > 0 ? LABELS[rating] : '') : (card?.rating > 0 ? LABELS[card.rating] : '');
+  }
+
+  function rateCard(cardId, rating) {
+    const card = cards.find(c => c.id === cardId);
+    if (!card) return;
+    card.rating = rating;
+    setStars(cardId, rating, false);
+    document.getElementById('card-' + cardId).classList.remove('unrated');
+    const rated = cards.filter(c => c.rating > 0).length;
+    document.getElementById('cnt-rated').textContent = rated;
+    document.getElementById('cnt-left').textContent = cards.length - rated;
+  }
+
+  async function submitAll() {
+    const unrated = cards.filter(c => !c.rating);
+    if (unrated.length > 0) {
+      unrated.forEach(c => document.getElementById('card-' + c.id).classList.add('unrated'));
+      showStatus(unrated.length + ' изображений без оценки — выделены оранжевым. Отправляем через 2 сек...', '#C17E3A');
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('progress-wrap').style.display = 'block';
+    setProgress(20, 'Подготовка данных...');
+    const values = [new Date().toLocaleString('ru-RU'), ...cards.map(c => c.rating || '')];
+    setProgress(60, 'Отправка в Google Sheets...');
+    try {
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ values }) });
+      setProgress(100, '');
+      localStorage.setItem('zendelle_done_' + SURVEY_ID, '1');
+      window.location.href = 'thankyou.html';
+    } catch(e) {
+      showStatus('Ошибка — попробуйте ещё раз.', '#9B2335');
+      document.getElementById('submit-btn').disabled = false;
+    }
+  }
+
+  function setProgress(pct, msg) {
+    document.getElementById('progress-fill').style.width = pct + '%';
+    if (msg) { document.getElementById('status-msg').style.color = 'var(--text-muted)'; document.getElementById('status-msg').textContent = msg; }
+  }
+  function showStatus(msg, color) {
+    document.getElementById('progress-wrap').style.display = 'block';
+    document.getElementById('status-msg').style.color = color;
+    document.getElementById('status-msg').textContent = msg;
+  }
+  init();
+</script>
+</body>
+</html>

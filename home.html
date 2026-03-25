@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zendelle — Опрос</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F7F5F0; --surface: #FFFFFF; --border: #E2DDD6;
+      --text: #1A1714; --text-muted: #7A746C;
+      --green: #2D6A4F; --green-light: #D8F3DC; --accent: #C17E3A;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; }
+    header h1 { font-family: 'DM Serif Display', serif; font-size: 2rem; font-weight: 400; margin-bottom: 4px; }
+    header p { font-size: 0.88rem; color: var(--text-muted); }
+    main { max-width: 580px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .intro { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+    .intro h2 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; font-weight: 400; margin-bottom: 6px; }
+    .intro p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+    .surveys-list { display: flex; flex-direction: column; gap: 10px; }
+    .survey-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1rem 1.25rem; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .survey-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+    .survey-card.done { border-color: var(--green); background: #FAFFFE; cursor: default; }
+    .survey-card.done:hover { box-shadow: none; }
+    .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .card-body { flex: 1; }
+    .card-title { font-size: 0.95rem; font-weight: 500; margin-bottom: 2px; }
+    .card-sub { font-size: 0.78rem; color: var(--text-muted); }
+    .card-status .arrow { font-size: 1.2rem; color: var(--text-muted); }
+    .done-badge { background: var(--green-light); color: var(--green); border: 1px solid var(--green); border-radius: 20px; font-size: 0.72rem; font-weight: 500; padding: 3px 10px; white-space: nowrap; }
+    .progress-bar { margin-top: 1.5rem; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px; }
+    .progress-track { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s; }
+    footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 3rem; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Zendelle</h1>
+  <p>Опрос по оценке аксессуаров</p>
+</header>
+<main>
+  <div class="intro">
+    <h2>Добро пожаловать!</h2>
+    <p>Пожалуйста, оцените изображения по каждой категории аксессуаров. Вы можете проходить опросы в любом порядке и возвращаться к ним в любое время — ваш прогресс сохраняется.</p>
+  </div>
+  <div class="surveys-list">
+      <div class="survey-card" id="card-bracelet-sets" onclick="goSurvey('bracelet-sets', 'survey-bracelet-sets.html')">
+        <div class="card-icon" style="background:#F0EBF8">📿</div>
+        <div class="card-body">
+          <div class="card-title">Наборы браслетов</div>
+          <div class="card-sub">51 изображений для оценки</div>
+        </div>
+        <div class="card-status" id="status-bracelet-sets">
+          <span class="arrow">→</span>
+        </div>
+      </div>
+      <div class="survey-card" id="card-bracelets" onclick="goSurvey('bracelets', 'survey-bracelets.html')">
+        <div class="card-icon" style="background:#EBF4F8">💎</div>
+        <div class="card-body">
+          <div class="card-title">Браслеты</div>
+          <div class="card-sub">100 изображений для оценки</div>
+        </div>
+        <div class="card-status" id="status-bracelets">
+          <span class="arrow">→</span>
+        </div>
+      </div>
+      <div class="survey-card" id="card-earrings" onclick="goSurvey('earrings', 'survey-earrings.html')">
+        <div class="card-icon" style="background:#F8F4EB">✨</div>
+        <div class="card-body">
+          <div class="card-title">Серьги</div>
+          <div class="card-sub">80 изображений для оценки</div>
+        </div>
+        <div class="card-status" id="status-earrings">
+          <span class="arrow">→</span>
+        </div>
+      </div>
+      <div class="survey-card" id="card-brooches" onclick="goSurvey('brooches', 'survey-brooches.html')">
+        <div class="card-icon" style="background:#F8EBF0">🌸</div>
+        <div class="card-body">
+          <div class="card-title">Броши и наборы</div>
+          <div class="card-sub">63 изображений для оценки</div>
+        </div>
+        <div class="card-status" id="status-brooches">
+          <span class="arrow">→</span>
+        </div>
+      </div></div>
+  <div class="progress-bar">
+    <div class="progress-label"><span>Прогресс</span><span id="progress-text">0 / 4</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+</main>
+<footer>Zendelle · Опрос качества аксессуаров</footer>
+<script>
+  const SURVEY_IDS = ["bracelet-sets","bracelets","earrings","brooches"];
+  const TOTAL = SURVEY_IDS.length;
+
+  function loadProgress() {
+    let done = 0;
+    SURVEY_IDS.forEach(id => {
+      const completed = localStorage.getItem('zendelle_done_' + id) === '1';
+      const card = document.getElementById('card-' + id);
+      const status = document.getElementById('status-' + id);
+      if (completed && card) {
+        card.classList.add('done');
+        status.innerHTML = '<span class="done-badge">✓ Пройдено</span>';
+        done++;
+      }
+    });
+    document.getElementById('progress-text').textContent = done + ' / ' + TOTAL;
+    document.getElementById('progress-fill').style.width = (done / TOTAL * 100) + '%';
+  }
+
+  function goSurvey(id, file) {
+    if (localStorage.getItem('zendelle_done_' + id) === '1') return;
+    window.location.href = file;
+  }
+
+  loadProgress();
+</script>
+</body>
+</html>
